@@ -1,2 +1,0 @@
-buildspec.mk.default  core	    envsetup.sh  target
-CleanSpec.mk	      deleteme.txt  libs	 tools
