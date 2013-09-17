@@ -27,11 +27,14 @@
 # A mapping from shorthand names to include directories.
 #
 pathmap_INCL := \
+    bluedroid:system/bluetooth/bluedroid/include \
+    bluez:external/bluetooth/bluez \
     bootloader:bootable/bootloader/legacy/include \
     camera:system/media/camera/include \
     corecg:external/skia/include/core \
     frameworks-base:frameworks/base/include \
     frameworks-native:frameworks/native/include \
+    glib:external/bluetooth/glib \
     graphics:external/skia/include/core \
     libc:bionic/libc/include \
     libdrm1:frameworks/base/media/libdrm/mobile1/include \
@@ -54,7 +57,6 @@ pathmap_INCL := \
     wilhelm:frameworks/wilhelm/include \
     wilhelm-ut:frameworks/wilhelm/src/ut \
     speex:external/speex/include
-
 #
 # Returns the path to the requested module's include directory,
 # relative to the root of the source tree.  Does not handle external

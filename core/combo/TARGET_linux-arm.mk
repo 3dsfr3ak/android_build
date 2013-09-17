@@ -68,49 +68,16 @@ endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-ifeq ($(TARGET_USE_O3),true)
-TARGET_arm_CFLAGS :=    -O3 \
+TARGET_arm_CFLAGS :=    -O2 \
                         -fomit-frame-pointer \
                         -fstrict-aliasing    \
                         -funswitch-loops
-else
-TARGET_arm_CFLAGS :=    -Os \
-                        -fomit-frame-pointer \
-                        -fstrict-aliasing    \
-                        -fno-zero-initialized-in-bss \
-                        -funswitch-loops \
-                        -fno-tree-vectorize \
-                        -Wno-unused-parameter \
-                        -Wno-unused-value \
-                        -Wno-unused-function
-endif
 
-# Modules can choose to compile some source as thumb. As
-# non-thumb enabled targets are supported, this is treated
-# as a 'hint'. If thumb is not enabled, these files are just
-# compiled as ARM.
-ifeq ($(ARCH_ARM_HAVE_THUMB_SUPPORT),true)
-ifeq ($(TARGET_USE_O3),true)
-    TARGET_thumb_CFLAGS :=  -mthumb \
-                            -O3 \
-                            -fomit-frame-pointer \
-                            -fno-strict-aliasing \
-                            -Wstrict-aliasing=2 \
-                            -Werror=strict-aliasing \
-                            -fno-tree-vectorize \
-                            -funsafe-math-optimizations \
-                            -Wno-unused-parameter \
-                            -Wno-unused-value \
-                            -Wno-unused-function
-else
-    TARGET_thumb_CFLAGS :=  -mthumb \
-                            -Os \
-                            -fomit-frame-pointer \
-                            -fno-strict-aliasing
-endif
-else
-TARGET_thumb_CFLAGS := $(TARGET_arm_CFLAGS)
-endif
+# Modules can choose to compile some source as thumb.
+TARGET_thumb_CFLAGS :=  -mthumb \
+                        -Os \
+                        -fomit-frame-pointer \
+                        -fno-strict-aliasing
 
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
 # or in your environment to force a full arm build, even for
@@ -128,7 +95,7 @@ endif
 
 ifeq ($(TARGET_DISABLE_ARM_PIE),true)
    PIE_GLOBAL_CFLAGS :=
-   PIE_EXECUTABLE_TRANSFORM := -Wl,-T,$(BUILD_SYSTEM)/armelf.x
+   PIE_EXECUTABLE_TRANSFORM :=
 else
    PIE_GLOBAL_CFLAGS := -fPIE
    PIE_EXECUTABLE_TRANSFORM := -fPIE -pie
@@ -150,11 +117,11 @@ android_config_h := $(call select-android-config-h,linux-arm)
 TARGET_ANDROID_CONFIG_CFLAGS := -include $(android_config_h) -I $(dir $(android_config_h))
 TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
 
-# This warning causes dalvik not to build with gcc 4.x and -Werror.
+# This warning causes dalvik not to build with gcc 4.6+ and -Werror.
 # We cannot turn it off blindly since the option is not available
 # in gcc-4.4.x.  We also want to disable sincos optimization globally
 # by turning off the builtin sin function.
-ifneq ($(filter 4.6 4.6.% 4.7 4.7.%, $(shell $(TARGET_CC) --version)),)
+ifneq ($(filter 4.6 4.6.% 4.7 4.7.%, $(TARGET_GCC_VERSION)),)
 TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable -fno-builtin-sin \
 			-fno-strict-volatile-bitfields
 endif
